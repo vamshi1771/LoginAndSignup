@@ -6,6 +6,6 @@ export const setUser=(data)=>({
     payload:data
 })
 
-export const closeSnackBar=(data)=>({
+export const clearUser=(data)=>({
     type:CLEAR_USER,
 })

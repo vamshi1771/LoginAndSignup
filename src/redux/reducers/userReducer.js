@@ -3,7 +3,10 @@ import { SET_USER,CLEAR_USER } from "../types/userTypes"
 export const INITIAL_STATE={
     type:'',
     userId : "",
+    userName : "",
+    email : "",
     cookie : "",
+    role : ""
 }
 
 const userReducer=(state= INITIAL_STATE, action)=>{
@@ -12,7 +15,10 @@ const userReducer=(state= INITIAL_STATE, action)=>{
             return{
                 ...state,
                userId : action.payload.userId,
-               cookie : action.payload.cookie
+               cookie : action.payload.cookie,
+               userName : action.payload.userName,
+               email : action.payload.email,
+               role : action.payload.role,
             }
             case CLEAR_USER:
             return{

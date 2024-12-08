@@ -2,12 +2,14 @@ import React, { useState, useRef } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import Form from 'react-bootstrap/Form';
 import {Button} from '@mui/material';
+import { useSelector } from "react-redux";
 import SignInForm from "./Signin";
 import SignUpForm from "./Signup";
 import "./auth.css";
 
 const Login = () => {
 
+  const user = useSelector((state) => state.user.userId);
     const initialState ={
         email : "",
         password : "",
@@ -18,7 +20,6 @@ const Login = () => {
   }
     const [users,setUser] = useState(initialState);
     const [errors,setErrors] = useState(initialError);
-
     const handleNameChange =(e) =>{
 
     }
@@ -35,17 +36,19 @@ const Login = () => {
     };
     const containerClass =
     "container " + (type === "signUp" ? "right-panel-active" : "");
-
+    React.useEffect(()=>{
+      console.log("user" + user);
+    },[user])
   return (
     <div className="App">
-    <h2>Sign in/up Form</h2>
+    {/* <h2 className="text-indigo-900">Sign in/up Form</h2> */}
     <div className={containerClass} id="container">
       <SignUpForm />
       <SignInForm />
       <div className="overlay-container">
         <div className="overlay">
           <div className="overlay-panel overlay-left">
-            <h1>Welcome!</h1>
+            <h1>Welcome Back!</h1>
             <p>
               To keep connected with us please login with your personal info
             </p>
