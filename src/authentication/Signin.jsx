@@ -11,6 +11,7 @@ import { faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 
 
+
 const SignInForm = () => {
 
 
@@ -60,6 +61,7 @@ const SignInForm = () => {
 
         const response = await fetch(`${BASE_URL}${ENDPOINTS.LOGIN}`, {
             method: 'POST',
+            credentials: 'include', 
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -68,8 +70,8 @@ const SignInForm = () => {
         if (response.status == 200) {
             disPatch(openSnackBar({ severity: "success", message: "You Logged Successfully" }))
             const res = await response.json();
-                console.log(res)
-            disPatch(setUser({userId : res._id, cookie : response.cookie,role : res.role, userName : res.userName,email : res.email}));
+
+            disPatch(setUser({userId : res._id,cookie : response.cookie, role : res.role, userName : res.userName,email : res.email}));
             setState(initalState);
             navigate('/');
         }

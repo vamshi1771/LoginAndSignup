@@ -5,8 +5,8 @@ export const INITIAL_STATE={
     userId : "",
     userName : "",
     email : "",
-    cookie : "",
-    role : ""
+    role : "",
+    cookie : ""
 }
 
 const userReducer=(state= INITIAL_STATE, action)=>{
@@ -15,9 +15,9 @@ const userReducer=(state= INITIAL_STATE, action)=>{
             return{
                 ...state,
                userId : action.payload.userId,
-               cookie : action.payload.cookie,
                userName : action.payload.userName,
                email : action.payload.email,
+               cookie : action.payload.cookie,
                role : action.payload.role,
             }
             case CLEAR_USER:

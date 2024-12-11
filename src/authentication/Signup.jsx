@@ -75,7 +75,7 @@ const SignUpForm = () => {
         if (response.status == 201) {
             const res = await response.json();
             disPatch(setUser({
-                userId: res._id, cookie: response.cookie, role: res.role, userName: res.userName,
+                userId: res._id, role: res.role, userName: res.userName,
                 email: res.email
             }));
             setState(initalState);
