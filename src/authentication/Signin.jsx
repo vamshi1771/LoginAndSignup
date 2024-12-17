@@ -61,7 +61,6 @@ const SignInForm = () => {
 
         const response = await fetch(`${BASE_URL}${ENDPOINTS.LOGIN}`, {
             method: 'POST',
-            credentials: 'include', 
             headers: {
                 'Content-Type': 'application/json',
             },

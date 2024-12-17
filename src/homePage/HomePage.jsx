@@ -21,7 +21,14 @@ const HomePage = () => {
     const handleLogout = async (e) => {
             console.log(user)
         try{
-            const response = await axios.get(`${ENDPOINTS.LOGOUT}`);
+            // const response = await axios.get(`${ENDPOINTS.LOGOUT}`);
+             const response = await fetch(`${BASE_URL}${ENDPOINTS.LOGOUT}`, {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
             disPatch(openSnackBar({ severity: "success" ,message : "Logged out Successfully" }));
         }
         catch(err){
