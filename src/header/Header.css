@@ -1,0 +1,56 @@
+.cm-header{
+    width: 100%;
+    height: 12vh;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    display:  flex;
+    align-items: center;
+}
+
+.cm-user-account{
+    position: relative;
+    right: 40px;
+}
+
+.cm-user-account{
+    display: flex;
+    gap: 20px;
+    flex-direction: row;
+}
+
+.cm-account{
+    position: relative;
+}
+
+.cm-account-role{
+    position: absolute;
+    right: 0;
+}
+
+.cm-menu-items{
+    display: flex;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .cm-menu-items,.cm-account {
+      display: none;
+    }
+    .cm-menu-bar {
+      display: inline-block;
+      cursor: pointer;
+      /* margin-left: 15px; */
+    }
+  }
+
+  @media (min-width: 769px) {
+    .cm-menu-items {
+      display: flex; /* Ensure the menu items are visible */
+      gap: 20px; /* Add spacing between items */
+    }
+    .cm-menu-bar {
+      display: none; /* Hide the menu bar (hamburger icon) */
+    }
+  }

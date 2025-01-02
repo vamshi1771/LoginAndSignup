@@ -35,7 +35,7 @@ const SignInForm = () => {
    
 
     const validation = (dataToSend) =>{
-        if(dataToSend.email == "") {
+        if(dataToSend.userName == "") {
             disPatch(openSnackBar({ severity: "error", message: "Please enter your email" }));
             return false;
         }
@@ -49,7 +49,7 @@ const SignInForm = () => {
     const handleOnSubmit = async (evt, state) => {
         evt.preventDefault();
         const dataToSend = {
-            email: state?.email,
+            userName: state?.email,
             password: state?.password
         }
 
@@ -70,7 +70,7 @@ const SignInForm = () => {
             disPatch(openSnackBar({ severity: "success", message: "You Logged Successfully" }))
             const res = await response.json();
 
-            disPatch(setUser({userId : res._id,cookie : response.cookie, role : res.role, userName : res.userName,email : res.email}));
+            disPatch(setUser({userId : res.user_id, role : res.role, userName : res.userName,email : res.email}));
             setState(initalState);
             navigate('/');
         }
@@ -88,8 +88,8 @@ const SignInForm = () => {
             <form onSubmit={(e) =>{handleOnSubmit(e,state)}}>
                 <h1>Sign in</h1>
                 <input
-                    type="email"
-                    placeholder="Email"
+                    type="text"
+                    placeholder="User Name"
                     name="email"
                     value={state.email}
                     onChange={handleChange}

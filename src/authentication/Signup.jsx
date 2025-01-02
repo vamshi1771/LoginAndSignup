@@ -13,7 +13,8 @@ const SignUpForm = () => {
     const initalState = {
         firstName: "",
         email: "",
-        password: ""
+        password: "",
+        phoneNumber : ""
     }
     const [state, setState] = React.useState(initalState);
     const disPatch = useDispatch();
@@ -55,10 +56,12 @@ const SignUpForm = () => {
 
         const lastName = " user";
         const dataToSend = {
-            firstName: state?.firstName,
-            lastName: lastName,
+            // firstName: state?.firstName,
+            // lastName: lastName,
+            userName : state?.firstName,
             email: state?.email,
             password: state?.password,
+            phoneNumber : state?.phoneNumber,
             role : checked ? "ADMIN" : "USER"
         }
         const isValid = validation(dataToSend);
@@ -72,10 +75,11 @@ const SignUpForm = () => {
             },
             body: JSON.stringify(dataToSend),
         })
-        if (response.status == 201) {
+        if (response.status == 200) {
             const res = await response.json();
+            console.log("res",res);
             disPatch(setUser({
-                userId: res._id, role: res.role, userName: res.userName,
+                userId: res.user_id, role: res.role, userName: res.userName,
                 email: res.email
             }));
             setState(initalState);
@@ -108,6 +112,13 @@ const SignUpForm = () => {
                     value={state.email}
                     onChange={handleChange}
                     placeholder="Email"
+                />
+                <input
+                    type="text"
+                    name="phoneNumber"
+                    value={state.phoneNumber}
+                    onChange={handleChange}
+                    placeholder="Phone Number"
                 />
                 <div className="cm-password">
                     <input

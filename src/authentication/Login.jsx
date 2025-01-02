@@ -36,9 +36,6 @@ const Login = () => {
     };
     const containerClass =
     "container " + (type === "signUp" ? "right-panel-active" : "");
-    React.useEffect(()=>{
-      console.log("user" + user);
-    },[user])
   return (
     <div className="App">
     {/* <h2 className="text-indigo-900">Sign in/up Form</h2> */}

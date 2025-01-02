@@ -1,0 +1,23 @@
+.cm-home-page {
+  position: absolute;
+  top: 12vh;
+}
+
+.cm-elements-on-image {
+  position: absolute;
+  left: 50%;
+  top: 1%;
+  transform: translate(-50%, 2%);
+}
+
+.cm-navigate-cards{
+    margin-top: 4em;
+    display: flex;
+    gap: 100px;
+}
+
+.css-1wnsr1i{
+    outline: 0;
+    border: 2px white !important;
+    width: 600px !important;
+}

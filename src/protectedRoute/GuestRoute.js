@@ -5,7 +5,7 @@ import { Navigate } from "react-router-dom";
 
 const GuestRoute = ({ children }) => {
     const user = useSelector((state) => state.user.userId);
-    return user === "" ? children :  <Navigate to="/" /> ;
+    return user ? <Navigate to="/" /> : children;    
 };
 
 export default GuestRoute;

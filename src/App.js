@@ -8,6 +8,7 @@ import ProtectedRoute from './protectedRoute/protectedRoute';
 import GuestRoute from './protectedRoute/GuestRoute';
 import store from './redux/Store';
 import HomePage from './homePage/HomePage';
+import Header from './header/Header';
 import { useSelector } from "react-redux";
 import { useEffect } from 'react';
 import './App.css';
@@ -17,15 +18,21 @@ function App() {
 
   const user = useSelector((state) => state.user.userId);
 
-  useEffect(()=>{
-    console.log(user);
-  },[user])
+ 
 
   return (
     <div className="App">
       <Routes>
-        <Route path="/login" element={<GuestRoute> <Login /> </GuestRoute>}/>
-        <Route path="/" element={ <ProtectedRoute> <HomePage /> </ProtectedRoute>}/>
+        <Route path="/login" element={<GuestRoute> <Login /> </GuestRoute>} />
+        <Route path="/" element={<ProtectedRoute>
+          <>
+            <Header />
+            <Routes>
+              <Route index element={<HomePage />} />
+            </Routes>
+          </>
+        </ProtectedRoute>} />
+
       </Routes>
       <SnackBar />
     </div>

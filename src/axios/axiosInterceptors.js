@@ -2,25 +2,20 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { openSnackBar } from "../redux/actions/snackbaractions";
-import { clearUser } from "../redux/actions/userAction";
+const useAxiosInstance = () => {
+  const dispatch = useDispatch();
 
-
-const useAxiosInstance = ({token}) => {
-  // Create Axios instance
   const axiosInstance = axios.create({
-    baseURL: "http://localhost:8080/", 
-    timeout: 10000, 
-    headers: {
-      "Content-Type": "application/json",
-    },
+    baseURL: 'http://localhost:3000',
   });
 
-  // Request interceptor
   axiosInstance.interceptors.request.use(
     (config) => {
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+      //  request interceptors 
+      const userName = 'Akhil';
+      const password = 'Vamshi@1771';
+      config.headers['userName'] = userName;
+      config.headers['password'] = password;
       return config;
     },
     (error) => {
@@ -28,16 +23,16 @@ const useAxiosInstance = ({token}) => {
     }
   );
 
-  // Response interceptor
   axiosInstance.interceptors.response.use(
     (response) => {
+      //  response interceptors
       return response;
     },
     (error) => {
-      if (error.response && error.response.status === 401) {
-        // dispatch(openSnackBar({ severity: "error", message: "Please login first" }));
-        // dispatch(clearUser());
-        // navigate("/login");
+      if (error.response && error.response.data) {
+        dispatch(openSnackBar({ message: error.response.data.message, severity: 'error' }));
+      } else {
+        dispatch(openSnackBar({ message: 'An unexpected error occurred', severity: 'error' }));
       }
       return Promise.reject(error);
     }
