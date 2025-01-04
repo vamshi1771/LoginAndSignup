@@ -11,6 +11,8 @@ import HomePage from './homePage/HomePage';
 import Header from './header/Header';
 import { useSelector } from "react-redux";
 import { useEffect } from 'react';
+import InteractionPage from './components/InteractionPage';
+import AnalyticsPage from './components/AnalyticsPage';
 import './App.css';
 
 function App() {
@@ -19,20 +21,13 @@ function App() {
   const user = useSelector((state) => state.user.userId);
 
  
-
   return (
     <div className="App">
       <Routes>
         <Route path="/login" element={<GuestRoute> <Login /> </GuestRoute>} />
-        <Route path="/" element={<ProtectedRoute>
-          <>
-            <Header />
-            <Routes>
-              <Route index element={<HomePage />} />
-            </Routes>
-          </>
-        </ProtectedRoute>} />
-
+        <Route path="/" element={<ProtectedRoute><Header /><HomePage /></ProtectedRoute>} />
+        <Route path="/get-interactions" element={<ProtectedRoute><Header /><InteractionPage /></ProtectedRoute>} />
+        <Route path="/analytics" element={<ProtectedRoute><Header /><AnalyticsPage /></ProtectedRoute>} />
       </Routes>
       <SnackBar />
     </div>

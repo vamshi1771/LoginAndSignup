@@ -8,6 +8,7 @@ import { setUser } from "../redux/actions/userAction";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-regular-svg-icons";
 import { faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import Cookies from 'js-cookie';
 
 
 
@@ -19,7 +20,7 @@ const SignInForm = () => {
         email: "",
         password: ""
     }
-    const disPatch = useDispatch();
+    const dispatch = useDispatch();
     const [error, setError] = useState({});
     const [state, setState] = React.useState(initalState);
     const [isVisabale,setIsVisable] =useState(false);
@@ -36,52 +37,101 @@ const SignInForm = () => {
 
     const validation = (dataToSend) =>{
         if(dataToSend.userName == "") {
-            disPatch(openSnackBar({ severity: "error", message: "Please enter your email" }));
+            dispatch(openSnackBar({ severity: "error", message: "Please enter your email" }));
             return false;
         }
         if(dataToSend.password == ""){
-            disPatch(openSnackBar({ severity: "error", message: "Please enter your password" }));
+            dispatch(openSnackBar({ severity: "error", message: "Please enter your password" }));
             return false;
         }
         return true;
     }
 
-    const handleOnSubmit = async (evt, state) => {
-        evt.preventDefault();
+    // const handleOnSubmit = async (evt, state) => {
+    //     evt.preventDefault();
+    //     const dataToSend = {
+    //         userName: state?.email,
+    //         password: state?.password
+    //     }
+
+    //     const isValid = validation(dataToSend);
+    //     if(!isValid){
+    //         return;
+    //     }
+
+
+    //     const response = await fetch(`${BASE_URL}${ENDPOINTS.LOGIN}`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(dataToSend),
+    //     })
+    //     const token = response.headers['authorization'];
+    //   console.log("token", token);
+    //   if (token) {
+    //     const jwtToken = token.split(' ')[1]; // Extract the token part
+    //     console.log("jwtToken", jwtToken);
+    //     Cookies.set('jwt_token', jwtToken, { expires: 7, path: '/' }); // Set the token in the cookie, expires in 7 days
+    //   }
+    //     if (response.status == 200) {
+    //         dispatch(openSnackBar({ severity: "success", message: "You Logged Successfully" }))
+    //         const res = await response.json();
+
+    //         dispatch(setUser({userId : res.user_id, role : res.role, userName : res.userName,email : res.email}));
+    //         setState(initalState);
+    //         navigate('/');
+    //     }
+    //     else {
+    //         const errors = await response.json();
+    //         setError(errors)
+    //         if(errors?.email != "") dispatch(openSnackBar({ severity: "error", message: errors?.email }));
+    //         else if (errors?.password != "") dispatch(openSnackBar({ severity: "error", message: errors?.password }));
+    //     }
+
+    // };
+
+    const handleOnSubmit = async (event,state) => {
+        event.preventDefault();
         const dataToSend = {
-            userName: state?.email,
-            password: state?.password
-        }
-
+                    userName: state?.email,
+                    password: state?.password
+                }
         const isValid = validation(dataToSend);
-        if(!isValid){
-            return;
+        if (!isValid) {
+          return;
         }
-
-
-        const response = await fetch(`${BASE_URL}${ENDPOINTS.LOGIN}`, {
+    
+        try {
+          const response = await fetch(`${BASE_URL}${ENDPOINTS.LOGIN}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify(dataToSend),
-        })
-        if (response.status == 200) {
-            disPatch(openSnackBar({ severity: "success", message: "You Logged Successfully" }))
+          });
+    
+          if (response.status === 200) {
+            dispatch(openSnackBar({ severity: "success", message: "You Logged Successfully" }));
             const res = await response.json();
-
-            disPatch(setUser({userId : res.user_id, role : res.role, userName : res.userName,email : res.email}));
+            dispatch(setUser({ userId: res.userId, role: res.role, userName: res.userName, email: res.email,token : res.token }));
             setState(initalState);
             navigate('/');
-        }
-        else {
+          } else {
             const errors = await response.json();
-            setError(errors)
-            if(errors?.email != "") disPatch(openSnackBar({ severity: "error", message: errors?.email }));
-            else if (errors?.password != "") disPatch(openSnackBar({ severity: "error", message: errors?.password }));
+            setError(errors);
+            if (errors?.email) {
+              dispatch(openSnackBar({ severity: "error", message: errors.email }));
+            } else if (errors?.password) {
+              dispatch(openSnackBar({ severity: "error", message: errors.password }));
+            }
+          }
+        } catch (error) {
+          console.error('Login failed:', error);
+          dispatch(openSnackBar({ severity: "error", message: "Login failed" }));
         }
+      };
 
-    };
 
     return (
         <div className="form-container sign-in-container">

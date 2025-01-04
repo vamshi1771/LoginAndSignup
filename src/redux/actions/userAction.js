@@ -1,9 +1,11 @@
 
-import { SET_USER, CLEAR_USER } from "../types/userTypes";
+export const SET_USER = 'SET_USER';
+export const CLEAR_USER = 'CLEAR_USER';
 
-export const setUser=(data)=>({
+
+export const setUser=(user)=>({
     type:SET_USER,
-    payload:data
+    payload:user,
 })
 
 export const clearUser=(data)=>({

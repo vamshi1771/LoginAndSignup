@@ -1,11 +1,11 @@
-import { SNACK_CLOSE,SNACK_OPEN } from "../types/sanckBarTypes";
+export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
+export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
-export const openSnackBar=(data)=>({
-    type:SNACK_OPEN,
-    payload:data
+export const openSnackBar=(payload)=>({
+    type:OPEN_SNACKBAR,
+    payload
 })
 
-export const closeSnackBar=(data)=>({
-    type:SNACK_CLOSE,
-    
+export const closeSnackBar=()=>({
+    type:CLOSE_SNACKBAR,
 })

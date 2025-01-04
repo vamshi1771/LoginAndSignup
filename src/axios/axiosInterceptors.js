@@ -2,20 +2,21 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { openSnackBar } from "../redux/actions/snackbaractions";
-const useAxiosInstance = () => {
+import Cookies from 'js-cookie';
+import { BASE_URL } from "../utils/urls";
+const useAxiosInstance = (token) => {
   const dispatch = useDispatch();
 
   const axiosInstance = axios.create({
-    baseURL: 'http://localhost:3000',
+    baseURL: BASE_URL,
+    withCredentials: true,
   });
 
   axiosInstance.interceptors.request.use(
-    (config) => {
-      //  request interceptors 
-      const userName = 'Akhil';
-      const password = 'Vamshi@1771';
-      config.headers['userName'] = userName;
-      config.headers['password'] = password;
+    (config) => { // Read the token from the cookies
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`; // Add the token to the headers
+      }
       return config;
     },
     (error) => {
@@ -26,13 +27,20 @@ const useAxiosInstance = () => {
   axiosInstance.interceptors.response.use(
     (response) => {
       //  response interceptors
+      
       return response;
     },
     (error) => {
-      if (error.response && error.response.data) {
-        dispatch(openSnackBar({ message: error.response.data.message, severity: 'error' }));
+      if (error.response) {
+        const { status, data } = error.response;
+        console.error(`Error ${status}: ${data.message || 'An error occurred'}`);
+        dispatch(openSnackBar({ message: data.message || 'An error occurred', severity: 'error' }));
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+        dispatch(openSnackBar({ message: 'No response received from the server', severity: 'error' }));
       } else {
-        dispatch(openSnackBar({ message: 'An unexpected error occurred', severity: 'error' }));
+        console.error('Error setting up request:', error.message);
+        dispatch(openSnackBar({ message: error.message, severity: 'error' }));
       }
       return Promise.reject(error);
     }

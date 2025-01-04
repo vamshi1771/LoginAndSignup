@@ -1,29 +1,30 @@
 
-
-import { SNACK_CLOSE,SNACK_OPEN } from "../types/sanckBarTypes";
+import { OPEN_SNACKBAR,CLOSE_SNACKBAR } from "../actions/snackbaractions"
 
 export const INITIAL_STATE={
-    type:'',
     open :false,
-    severity :'',
+    severity :'info',
     message:'',
 }
 
 const snackbarReducer=(state= INITIAL_STATE, action)=>{
     switch (action.type){
-        case SNACK_OPEN:
+        case OPEN_SNACKBAR:
             return{
                 ...action.payload,
                 open:true,
                severity:action.payload.severity,
                message :action.payload.message,
             }
-            case SNACK_CLOSE:
-            return{
-                INITIAL_STATE
-            }
+            case CLOSE_SNACKBAR:
+                return {
+                    ...state,
+                    open: false,
+                    message: '',
+                    severity: 'info',
+                  };
             default :
-            return  INITIAL_STATE;
+            return  state;
     }
 }
 

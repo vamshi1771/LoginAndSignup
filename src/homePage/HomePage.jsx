@@ -7,10 +7,14 @@ import { openSnackBar } from "../redux/actions/snackbaractions";
 import { useNavigate } from "react-router-dom";
 import NavigateCard from "../components/NavigateCard";
 import RestaurantLead from "../components/RestaurantLead";
-import "./HomePage.css"
 import PocModal from "../modals/PocModal";
+import InteractionModal from "../modals/InteractionModal";
+import "./HomePage.css";
+
+
+
 const HomePage = () => {
-    const user = useSelector((state) => state.user.cookie);
+    const user = useSelector((state) => state.user);
     const disPatch = useDispatch();
     const navigate = useNavigate();
     const resturantLeadImage = "/resturant-image.jpg";
@@ -18,14 +22,17 @@ const HomePage = () => {
     const pocImage = "/Poc-image.jpg";
     const [openRestaurantModal, setOpenRestaurantModal] = React.useState(false);
     const [openPocModal, setOpenPocModal] = React.useState(false);
+    const [openInteractionModal, setOpenInteractionModal] = React.useState(false);
 
     const handleOpenModal = (heading) =>{
       if(heading == 'Restaurant')  setOpenRestaurantModal(true);
       if(heading == 'Contact')  setOpenPocModal(true);
+      if(heading == 'Interactions')  setOpenInteractionModal(true);
     }
     const handleCloseModal = (heading) =>{
       if(heading == 'Restaurant')  setOpenRestaurantModal(false);
       else if(heading == 'Contact')  setOpenPocModal(false);
+        else if(heading == 'Interactions')  setOpenInteractionModal(false);
     }
 
     const axios = AxiosInstance({ user });
@@ -54,6 +61,10 @@ const HomePage = () => {
         //     })
         //     .catch(error => console.error('Error:', error));
     }
+        useEffect(() => {
+            console.log("user", user);
+        }, [user]);
+
     return (
         <div>
             <div className="cm-home-page">
@@ -80,7 +91,8 @@ const HomePage = () => {
                         <RestaurantLead open={openRestaurantModal} handleClose={() => handleCloseModal('Restaurant')} />
                         <NavigateCard  ButtonName={"Add POC"} heading={"Contact"} content = {"Register contact details of Restaurant employees"} image ={pocImage} handleOpenModal={handleOpenModal}/>
                         <PocModal open={openPocModal} handleClose={() => handleCloseModal('Contact')}/>
-                        <NavigateCard  ButtonName={"Interact"} heading={"Interactions"} content = {"Enter details of recent Interactions with Restaurants"} image ={interactionImage}/>
+                        <NavigateCard  ButtonName={"Interact"} heading={"Interactions"} content = {"Enter details of recent Interactions with Restaurants"} image ={interactionImage} handleOpenModal={handleOpenModal}/>
+                        <InteractionModal open={openInteractionModal} handleClose={() => handleCloseModal('Interactions')}/>
                     </div>
                     
                 </div>

@@ -5,7 +5,9 @@ import { openSnackBar } from '../redux/actions/snackbaractions';
 import Modal from '@mui/material/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
 import useAxiosInstance from '../axios/axiosInterceptors';
+import { BASE_URL } from '../utils/urls';
 
 const RestaurantLead = ({ open, handleClose }) => {
 
@@ -15,7 +17,9 @@ const RestaurantLead = ({ open, handleClose }) => {
         restaurantType: "",
         callFrequency: "",
     }
-    const disPatch = useDispatch();
+    const addRegister = '/register-restaurant';
+    const userId = useSelector((state) => state.user.userId);
+    const dispatch = useDispatch();
     const axiosInstance = useAxiosInstance();
     const [restaurantLeads, setRestaurantLeads] = React.useState(initalState);
     const restaurantTypes = ["Italian", "Chinese", "Ethnic Restaurants", "Fine Dining", "Casual Dining", "Japanese", "Fast Food", "Buffet", " Cafés and Coffeehouses", "American"]
@@ -32,15 +36,15 @@ const RestaurantLead = ({ open, handleClose }) => {
     };
     const validateRestaurantLead = () => {
         if (restaurantLeads.restaurantName == "") {
-            disPatch(openSnackBar({ severity: "error", message: "Please enter Restaurant Name" }));
+            dispatch(openSnackBar({ severity: "error", message: "Please enter Restaurant Name" }));
             return false;
         }
         if (restaurantLeads.location == "") {
-            disPatch(openSnackBar({ severity: "error", message: "Please enter Restaurant Location" }));
+            dispatch(openSnackBar({ severity: "error", message: "Please enter Restaurant Location" }));
             return false;
         }
         if (restaurantLeads.restaurantType == "") {
-            disPatch(openSnackBar({ severity: "error", message: "Please enter Restaurant Type" }));
+            dispatch(openSnackBar({ severity: "error", message: "Please enter Restaurant Type" }));
             return false;
         }
         return true;
@@ -50,13 +54,22 @@ const RestaurantLead = ({ open, handleClose }) => {
         if (!isValid) {
             return;
         }
+        // const response = await fetch(`${BASE_URL}${addRegister}`, {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'withCredentials': true,
+        //             },
+        //             body: JSON.stringify(restaurantLeads),
+        //         })
         try {
             const res = await axiosInstance.post('/register-restaurant', restaurantLeads);
             console.log(res.data);
         } catch (error) {
             console.error(error);
         }
-        disPatch(openSnackBar({ severity: "success", message: "Restaurant Added Successfully" }));
+        dispatch(openSnackBar({ severity: "success", message: "Restaurant Added Successfully" }));
+        console.log("userId" ,userId);
         handleClose();
         setRestaurantLeads(initalState);
     }

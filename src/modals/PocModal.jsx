@@ -6,6 +6,8 @@ import Modal from '@mui/material/Modal';
 import { useDispatch } from 'react-redux';
 import { openSnackBar } from '../redux/actions/snackbaractions';
 import useAxiosInstance from '../axios/axiosInterceptors';
+import { clearUser } from '../redux/actions/userAction';
+import { useSelector } from 'react-redux';
 
 const PocModal = ({ open, handleClose }) => {
 
@@ -27,22 +29,30 @@ const PocModal = ({ open, handleClose }) => {
         boxShadow: 24,
         p: 4,
     };
-    const axiosInstance = useAxiosInstance();
+    const user = useSelector((state) => state.user);
+    const token = user?.token;
+    const axiosInstance = useAxiosInstance(token);
     const [poc, setPoc] = React.useState(initialState);
     const [restaurants, setRestaurants] = React.useState([]);
     const disPatch = useDispatch();
 
-    // useEffect(() => {
-    //     const fetchRestaurants = async () => {
-    //         try {
-    //             const res = await axiosInstance.get('/get-restaurants');
-    //             setRestaurants(res.data);
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     }
-    //     fetchRestaurants();
-    // }, []);
+
+    
+    React.useEffect(() => {
+        const fetchRestaurants = async () => {
+            try {
+                const response = await axiosInstance.get('/get-restaurants');
+                if (response.status === 200) {
+                    setRestaurants(response.data);
+                  } else {
+                    disPatch(openSnackBar({ severity: 'error', message: response.data.message }));
+                  }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchRestaurants();
+    }, []);
 
     const validatePoc = (poc) => {
         if (poc.pocName === "") {
