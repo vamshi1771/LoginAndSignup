@@ -15,12 +15,13 @@ const RestaurantLead = ({ open, handleClose }) => {
         restaurantName: "",
         location: "",
         restaurantType: "",
-        callFrequency: "",
+        callFrequency: null,
     }
     const addRegister = '/register-restaurant';
     const userId = useSelector((state) => state.user.userId);
+    const token = useSelector((state) => state.user.token);
     const dispatch = useDispatch();
-    const axiosInstance = useAxiosInstance();
+    const axiosInstance = useAxiosInstance(token);
     const [restaurantLeads, setRestaurantLeads] = React.useState(initalState);
     const restaurantTypes = ["Italian", "Chinese", "Ethnic Restaurants", "Fine Dining", "Casual Dining", "Japanese", "Fast Food", "Buffet", " Cafés and Coffeehouses", "American"]
     const style = {
@@ -49,27 +50,25 @@ const RestaurantLead = ({ open, handleClose }) => {
         }
         return true;
     }
+    const handleCloseRestaurantLead = () => {
+        handleClose();
+        setRestaurantLeads(initalState);
+    }
+
     const handleSubmitRestaurantLead = async() => {
         const isValid = validateRestaurantLead();
         if (!isValid) {
             return;
         }
-        // const response = await fetch(`${BASE_URL}${addRegister}`, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'withCredentials': true,
-        //             },
-        //             body: JSON.stringify(restaurantLeads),
-        //         })
+        
         try {
             const res = await axiosInstance.post('/register-restaurant', restaurantLeads);
-            console.log(res.data);
+            if (res.status === 200) {
+                dispatch(openSnackBar({severity: 'success', message: "Restaurant Registered Sucessfully"}))
+              }
         } catch (error) {
-            console.error(error);
+            console.log("error", error)
         }
-        dispatch(openSnackBar({ severity: "success", message: "Restaurant Added Successfully" }));
-        console.log("userId" ,userId);
         handleClose();
         setRestaurantLeads(initalState);
     }
@@ -88,7 +87,7 @@ const RestaurantLead = ({ open, handleClose }) => {
                     <div className='d-flex flex-col'>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <h3 className='text-rose-500 font-sans'>Add Restaurant</h3>
-                            <FontAwesomeIcon className='cm-pointer' onClick={handleClose} icon={faXmark} />
+                            <FontAwesomeIcon className='cm-pointer' onClick={handleCloseRestaurantLead} icon={faXmark} />
                         </div>
                         <input type="text" placeholder="Restaurant Name" value={restaurantLeads.restaurantName} onChange={(e) => setRestaurantLeads({ ...restaurantLeads, restaurantName: e.target.value })} />
                         <input type="text" placeholder="Location" value={restaurantLeads.location} onChange={(e) => setRestaurantLeads({ ...restaurantLeads, location: e.target.value })} />

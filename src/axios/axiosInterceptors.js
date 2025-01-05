@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { openSnackBar } from "../redux/actions/snackbaractions";
 import Cookies from 'js-cookie';
+import { clearUser } from "../redux/actions/userAction";
 import { BASE_URL } from "../utils/urls";
 const useAxiosInstance = (token) => {
   const dispatch = useDispatch();
@@ -33,8 +34,13 @@ const useAxiosInstance = (token) => {
     (error) => {
       if (error.response) {
         const { status, data } = error.response;
-        console.error(`Error ${status}: ${data.message || 'An error occurred'}`);
-        dispatch(openSnackBar({ message: data.message || 'An error occurred', severity: 'error' }));
+        if (status === 401) {
+          dispatch(clearUser()); // Dispatch clearUser action
+          dispatch(openSnackBar({ message: 'Session expired. Please log in again.', severity: 'error' }));
+        } else {
+          console.error(`Error ${status}: ${data.message || 'An error occurred'}`);
+          dispatch(openSnackBar({ message: data.message || 'An error occurred', severity: 'error' }));
+        }
       } else if (error.request) {
         console.error('No response received:', error.request);
         dispatch(openSnackBar({ message: 'No response received from the server', severity: 'error' }));

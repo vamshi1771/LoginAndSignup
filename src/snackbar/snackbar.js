@@ -22,14 +22,13 @@ const SnackBar = () => {
 
     return (
         <>
-            <Snackbar className="cm-snackbar" open={open} sx={{ width: "100%" }}
+            <Snackbar className="cm-snackbar" open={open} sx={{ width: "100%",zIndex:9999 }}
                     anchorOrigin={{
                        vertical: "top",
                        horizontal: "center"
                     }} autoHideDuration={3000} onClose={handleClose}>
                 <Alert
                     onClose={handleClose}
-                    
                     severity={severity}
                     variant="filled"
                     transitioncomponent="Fade"

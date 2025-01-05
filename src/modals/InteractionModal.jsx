@@ -1,23 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openSnackBar } from '../redux/actions/snackbaractions';
 import useAxiosInstance from '../axios/axiosInterceptors';
 
-const InteractionModal = ({open,handleClose,InteractionData}) => {
-   
+const InteractionModal = ({ open, handleClose, InteractionData, restaurantLists }) => {
+
     const initialState = {
-        restaurantId : InteractionData ? InteractionData.restaurantId : "",
-         pocId : "",
-         interactionType : "",
-         interactedDate : "",
-          interactionDetails : "",
-         orderDate : "",
-         orderAmount : "",
-         orderStatus : "",
+        restaurantId: InteractionData.restaurantId ? InteractionData.restaurantId : 0,
+        pocId: 0,
+        interactionType: "",
+        interactedDate: "",
+        interactionDetails: "",
+        orderAmount: null,
+        orderStatus: "",
     }
     const style = {
         position: 'absolute',
@@ -31,23 +30,15 @@ const InteractionModal = ({open,handleClose,InteractionData}) => {
         p: 4,
     };
 
-
     const disPatch = useDispatch();
-    const axiosInstance = useAxiosInstance();
     const [interaction, setInteraction] = React.useState(initialState);
-    const [restaurants, setRestaurants] = React.useState([]);
     const [pocs, setPocs] = React.useState([]);
-    
+    const token = useSelector((state) => state.user.token);
+    const axiosInstance = useAxiosInstance(token);
+    const [restaurants, setRestaurants] = useState([]);
+    const interactionTypes = ["ORDER", "CALL", "MEETING"];
+    const orderStatus = ["Pending", "Completed", "Cancelled"];
 
-    const handleRestaurantSelection = async(e) => {
-        setInteraction({...interaction,restaurantId:e.target.value})
-        try {
-            const res = await axiosInstance.get(`/get-pocs/${e.target.value}`);
-            setPocs(res.data);
-        } catch (error) {
-            console.error(error);
-        }
-    }
 
     const validateInteraction = (interaction) => {
         if (interaction.restaurantId === "") {
@@ -70,44 +61,85 @@ const InteractionModal = ({open,handleClose,InteractionData}) => {
             disPatch(openSnackBar({ severity: "error", message: "Please enter Interaction Details" }));
             return false;
         }
-        if (interaction.orderDate === "") {
-            disPatch(openSnackBar({ severity: "error", message: "Please enter Order Date" }));
-            return false;
-        }
-        if (interaction.orderAmount === "") {
+        if (interaction.orderAmount === "" && interaction.interactionType === 'ORDER') {
             disPatch(openSnackBar({ severity: "error", message: "Please enter Order Amount" }));
             return false;
         }
-        if (interaction.orderStatus === "") {
+        if (interaction.orderStatus === "" && interaction.interactionType === 'ORDER') {
             disPatch(openSnackBar({ severity: "error", message: "Please enter Order Status" }));
             return false;
         }
         return true;
     }
 
+    useEffect(() => {
+        setRestaurants(restaurantLists);
+    }, [restaurantLists]);
 
-    const handleSubmitInteraction = async() => {
+
+    const handleSubmitInteraction = async () => {
         const isValid = validateInteraction(interaction);
         if (!isValid) {
             return;
         }
-
+        const dataToSend = {
+            ...interaction,
+            pocId: Number(interaction.pocId),
+            interactedDate: interaction.interactedDate ? new Date(interaction.interactedDate).toISOString().split('T')[0] : '',
+            orderDate: interaction.orderDate ? new Date(interaction.orderDate).toISOString().split('T')[0] : '',
+            orderAmount: Number(interaction.orderAmount)
+        }
         try {
-            const res = await axiosInstance.post('/add-interaction', interaction);
+            const res = await axiosInstance.post('/add-interaction', dataToSend);
             console.log(res.data);
+            disPatch(openSnackBar({ severity: "success", message: "Interaction Added Successfully" }));
+            setInteraction(initialState);
         } catch (error) {
             console.error(error);
         }
-        disPatch(openSnackBar({ severity: "success", message: "Interaction Added Successfully" }));
+        setInteraction(initialState);
         handleClose();
     }
 
+    const handleRestaurantSelection = async (e) => {
+        e.preventDefault();
+        const id = Number(e.target.value);
+        try {
+            const res = await axiosInstance.get(`/get-pocs/${id}`);
+            setPocs(res.data);
+            setInteraction(initialState);
+        } catch (error) {
+            console.error(error);
+        }
+        setInteraction({ ...interaction, restaurantId: id });
+    }
+
+    const handlePocChange = (e) => {
+        const id = Number(e.target.value);
+        setInteraction({
+            ...interaction,
+            pocId: id
+        })
+    }
+    const handlecloseInteractionModal = () => {
+        setInteraction(initialState);
+        handleClose();
+    }
+    useEffect(() => {
+        setInteraction(
+            {
+                ...interaction,
+                restaurantId: InteractionData?.restaurantId,
+            }
+        )
+
+    }, [InteractionData])
 
     return (
         <div className='mt-2'>
             <Modal
                 open={open}
-                onClose={handleClose}
+                onClose={() => { handlecloseInteractionModal() }}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -115,19 +147,33 @@ const InteractionModal = ({open,handleClose,InteractionData}) => {
                     <div className='d-flex flex-col'>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <h3 className='text-rose-500 font-sans'>Add Interaction</h3>
-                            <FontAwesomeIcon className='cm-pointer' onClick={handleClose} icon={faXmark} />
+                            <FontAwesomeIcon className='cm-pointer' onClick={() => { handlecloseInteractionModal() }} icon={faXmark} />
                         </div>
-                        <select value={interaction.restaurantId} onChange={(e) => setInteraction({ ...interaction, restaurantId: e.target.value })}>
-                            <option value="">Select Restaurant</option>
-                            {restaurants.map((restaurant) => <option key={restaurant.id} value={restaurant.id}>{restaurant.restaurantName}</option>)} </select>
-                        <select value={interaction.pocId} onChange={(e) => setInteraction({ ...interaction, pocId: e.target.value })}>
-                            <option value="">Select Poc</option>
-                            {pocs.map((poc) => <option key={poc.id} value={poc.id}>{poc.pocName}</option>)} </select>
-                        <input type="text" placeholder="Interaction Type" value={interaction.interactionType} onChange={(e) => setInteraction({ ...interaction, interactionType: e.target.value })} />
+                        {InteractionData == null ?
+                            <select value={interaction.restaurantId} onChange={handleRestaurantSelection}>
+                                <option value={null} >Select Restaurant</option>
+                                {restaurants?.map((restaurant) => <option key={restaurant.restaurantId} value={restaurant.restaurantId}>{restaurant.restaurantName}</option>)} </select>
+                            : <input type="text" placeholder="Restaurant Name" value={InteractionData.restaurantName} disabled />
+                        }
+                        <select value={interaction.pocId} onChange={handlePocChange}>
+                            {(pocs.length === 0 && InteractionData.restaurantPocs.length == 0) ? <option value=" "> No Pocs Registered </option> : <option value="">Select Poc</option>}
+                            {InteractionData == null ?
+                                (pocs?.map((poc) => <option key={poc.pocId} value={poc.pocId}>{poc.pocName}</option>))
+                                : (InteractionData.restaurantPocs.map((poc) => <option key={poc.pocId} value={poc.pocId}>{poc.pocName}</option>))}
+                        </select>
+                        <select value={interaction.interactionType} onChange={(e) => setInteraction({ ...interaction, interactionType: e.target.value })}>
+                            <option value="">Select Role</option>
+                            {interactionTypes.map((role) => <option key={role} value={role}>{role}</option>)} </select>
                         <input type="text" placeholder="Interaction Details" value={interaction.interactionDetails} onChange={(e) => setInteraction({ ...interaction, interactionDetails: e.target.value })} />
-                        <input type="date" placeholder="Order Date" value={interaction.orderDate} onChange={(e) => setInteraction({ ...interaction, orderDate: e.target.value })} />
-                        <input type="text" placeholder="Order Amount" value={interaction.orderAmount} onChange={(e) => setInteraction({ ...interaction, orderAmount: e.target.value })} />
-                        <input type="text" placeholder="Order Status" value={interaction.orderStatus} onChange={(e) => setInteraction({ ...interaction, orderStatus: e.target.value })} />
+                        {/* <input type="date" placeholder="Order Date" value={interaction.orderDate} onChange={(e) => setInteraction({ ...interaction, orderDate: e.target.value })} /> */}
+                        <input type="date" placeholder="Interactio Date"
+                            onFocus={(e) => (e.target.type = 'date')}
+                            onBlur={(e) => (e.target.type = 'text')}
+                            value={interaction.interactedDate} onChange={(e) => setInteraction({ ...interaction, interactedDate: e.target.value })} />
+                        {interaction.interactionType === 'ORDER' && <input type="Number" placeholder="Order Amount" value={interaction.orderAmount} onChange={(e) => setInteraction({ ...interaction, orderAmount: e.target.value })} />}
+                        {interaction.interactionType === 'ORDER' && <select value={interaction.orderStatus} onChange={(e) => setInteraction({ ...interaction, orderStatus: e.target.value })}>
+                            <option value="">Select Order Status</option>
+                            {orderStatus.map((role) => <option key={role} value={role}>{role}</option>)} </select>}
                         <button onClick={handleSubmitInteraction} className='mt-2'>Add Interaction</button>
                     </div>
                 </Box>

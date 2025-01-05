@@ -56,8 +56,6 @@ const SignUpForm = () => {
 
         const lastName = " user";
         const dataToSend = {
-            // firstName: state?.firstName,
-            // lastName: lastName,
             userName : state?.firstName,
             email: state?.email,
             password: state?.password,
@@ -77,10 +75,11 @@ const SignUpForm = () => {
         })
         if (response.status == 200) {
             const res = await response.json();
-            console.log("res",res);
+            disPatch(openSnackBar({ severity: "success", message: "User Registered Successfully" }));
             disPatch(setUser({
-                userId: res.user_id, role: res.role, userName: res.userName,
-                email: res.email
+                userId: res.userId, role: res.role, userName: res.userName,
+                email: res.email,
+                token : res.token
             }));
             setState(initalState);
             navigate('/');

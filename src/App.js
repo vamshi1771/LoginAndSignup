@@ -26,7 +26,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<GuestRoute> <Login /> </GuestRoute>} />
         <Route path="/" element={<ProtectedRoute><Header /><HomePage /></ProtectedRoute>} />
-        <Route path="/get-interactions" element={<ProtectedRoute><Header /><InteractionPage /></ProtectedRoute>} />
+        <Route path="/interactions" element={<ProtectedRoute><Header /><InteractionPage /></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute><Header /><AnalyticsPage /></ProtectedRoute>} />
       </Routes>
       <SnackBar />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import Box from '@mui/material/Box';
@@ -9,7 +9,7 @@ import useAxiosInstance from '../axios/axiosInterceptors';
 import { clearUser } from '../redux/actions/userAction';
 import { useSelector } from 'react-redux';
 
-const PocModal = ({ open, handleClose }) => {
+const PocModal = ({ open, handleClose,restaurants }) => {
 
     const initialState = {
         pocName: "",
@@ -29,30 +29,16 @@ const PocModal = ({ open, handleClose }) => {
         boxShadow: 24,
         p: 4,
     };
+    const roles = ["Owner", "Manager", "Chef", "Waiter",];
     const user = useSelector((state) => state.user);
     const token = user?.token;
     const axiosInstance = useAxiosInstance(token);
     const [poc, setPoc] = React.useState(initialState);
-    const [restaurants, setRestaurants] = React.useState([]);
     const disPatch = useDispatch();
 
 
     
-    React.useEffect(() => {
-        const fetchRestaurants = async () => {
-            try {
-                const response = await axiosInstance.get('/get-restaurants');
-                if (response.status === 200) {
-                    setRestaurants(response.data);
-                  } else {
-                    disPatch(openSnackBar({ severity: 'error', message: response.data.message }));
-                  }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        fetchRestaurants();
-    }, []);
+   
 
     const validatePoc = (poc) => {
         if (poc.pocName === "") {
@@ -78,6 +64,9 @@ const PocModal = ({ open, handleClose }) => {
         return true;
     }
 
+    // useEffect(()=>{
+    //     disPatch(clearUser());
+    // },[])
 
 
 
@@ -89,10 +78,18 @@ const PocModal = ({ open, handleClose }) => {
 
         try {
             const res = await axiosInstance.post('/register-poc', poc);
-            console.log(res.data);
+            if(res.status == 200){
+                disPatch(openSnackBar({severity: 'success', message: "Poc Registered Sucessfully"}))
+            } 
         } catch (error) {
+            disPatch(openSnackBar({severity: 'error', message: "Something went wrong"}))
             console.error(error);
         }
+        handleClose();
+        setPoc(initialState);
+    }
+
+    const handleCloseModal = () => {
         handleClose();
         setPoc(initialState);
     }
@@ -109,15 +106,17 @@ const PocModal = ({ open, handleClose }) => {
                     <div className='d-flex flex-col'>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <h3 className='text-rose-500 font-sans'>Add Poc</h3>
-                            <FontAwesomeIcon className='cm-pointer' onClick={handleClose} icon={faXmark} />
+                            <FontAwesomeIcon className='cm-pointer' onClick={handleCloseModal} icon={faXmark} />
                         </div>
+                        <select value={poc.role} onChange={(e) => setPoc({ ...poc, role: e.target.value })}>
+                            <option value="">Select Role</option>
+                            {roles.map((role) => <option key={role} value={role}>{role}</option>)} </select>
                         <input type="text" placeholder="Poc Name" value={poc.pocName} onChange={(e) => setPoc({ ...poc, pocName: e.target.value })} />
-                        <input type="text" placeholder="Role" value={poc.role} onChange={(e) => setPoc({ ...poc, role: e.target.value })} />
                         <input type="text" placeholder="Contact Number" value={poc.contactNumber} onChange={(e) => setPoc({ ...poc, contactNumber: e.target.value })} />
                         <input type="text" placeholder="Email Address" value={poc.emailAddress} onChange={(e) => setPoc({ ...poc, emailAddress: e.target.value })} />
-                        {/* <select value={poc.restaurantId} onChange={(e) => setPoc({ ...poc, restaurantId: e.target.value })}>
+                         <select value={poc.restaurantId} onChange={(e) => setPoc({ ...poc, restaurantId: e.target.value })}>
                             <option value="">Select Restaurant</option>
-                            {restaurants.map((restaurant) => <option key={restaurant.id} value={restaurant.id}>{restaurant.restaurantName}</option>)} </select> */}
+                            {restaurants.map((restaurant) => <option key={restaurant.restaurantId} value={restaurant.restaurantId}>{restaurant.restaurantName}</option>)} </select> 
                         <button onClick={handleSubmitPoc} className='mt-2'>Add Restaurant</button>
                     </div>
                 </Box>
