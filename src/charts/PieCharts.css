@@ -7,4 +7,23 @@
   .piechartTitle {
     margin-bottom: 20px;
   }
+
+  .bigchartSelect{
+    display: flex;
+    margin-left: 300px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .bigchartSelect > select{
+    margin-left: 20px;
+    margin-right: 20px;
+    /* border: none; */
+    border: green !important;
+    padding: 10px 15px;
+    width: max-content;
+    border-color:#ff4b2b;
+    border-radius: 4px;
+    box-shadow: 0 0 5px green;
+  }
   

@@ -35,9 +35,9 @@ const renderCustomizedLabel = ({
 function Piechart({ data, title, dataKey }) {
  
   const getPieData = (data, dataKey) => {
-    return data.map((item, index) => ({
-      name: item.restaurantName,
-      value: item.averageOrderCountPerMonth,
+    return data?.map((item, index) => ({
+      name: item.restaurantName ? item.restaurantName : item.restaurantType,
+      value: item.totalMonths ? item.totalOrderCount / item.totalMonths : item.count,
       color: COLORS[index % COLORS.length],
     }));
   };
@@ -45,7 +45,7 @@ function Piechart({ data, title, dataKey }) {
 const chartData = getPieData(data, dataKey)
   return (
     <div className="piechart">
-      <h3 className="piechartTitle">{title}</h3>
+      <h3 className="piechartTitle font-serif text-pink-500">{title}</h3>
       <PieChart width={500} height={500} aspect={2 / 1}>
         <Pie
           data={chartData}
@@ -56,11 +56,12 @@ const chartData = getPieData(data, dataKey)
           outerRadius={170}
           dataKey="value"
         >
-          {data.map((entry, index) => (
+          {data?.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
         <Tooltip />
+        
       </PieChart>
     </div>
   )

@@ -28,7 +28,11 @@ const InteractionPage = () => {
         setPanelData(data);
         setOpenInteractionModal(true);
     }
-    const handleCloseModal = () => setOpenInteractionModal(false);
+    const handleCloseModal = () => {
+        setOpenInteractionModal(false);
+        fetchRestaurants();
+    }
+
 
     useEffect(()=>{
         fetchRestaurants();
@@ -48,12 +52,14 @@ const InteractionPage = () => {
 
     return (
         <div className='cm-interaction-page'>
+            <div >
             <img src="/interaction-page-image.jpg" alt="This is a image"
                 style={{
                     width: "100%",
                     height: "60vh",
                 }} />
-
+                <h1 className='text-white position-absolute top-8 ms-2' >Today's Interactions</h1>
+                </div>
             <TableContainer className="cm-Table-container" component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead className="table-head fw-medium cm-sm-txt">

@@ -93,7 +93,7 @@
     width: 100%;
     outline: none;
   }
-  input,select:focus{
+  input:focus{
     border-color: #ff4b2b;
     box-shadow: 0 0 5px rgba(231, 73, 6, 0.566);
   }

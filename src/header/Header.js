@@ -83,7 +83,7 @@ const Header = () => {
                 <div className="cm-menu position-relative">
                     <div className="cm-menu-items ml-4">
                         <h4 onClick={() => { Navigate('/') }} className="text-white font-sans pt-3 cm-pointer">Home</h4>
-                        <h4 className="text-white font-sans pt-3 cm-pointer">Restaurants</h4>
+                        {/* <h4 className="text-white font-sans pt-3 cm-pointer">Restaurants</h4> */}
                         <h4 onClick={() => { Navigate('/interactions') }} className="text-white font-sans pt-3 cm-pointer">Interactions</h4>
                         <h4 onClick={() => { Navigate('/analytics') }} className="text-white font-sans pt-3 cm-pointer">Analytics </h4>
                     </div>
@@ -110,7 +110,6 @@ const Header = () => {
                             sx={{zIndex:9999}}
                         >
                             <MenuItem onClick={handleClose}>Home</MenuItem>
-                            <MenuItem onClick={handleClose}>Restaurants</MenuItem>
                             <MenuItem onClick={() => { Navigate('/get-interactions') }}>Interactions</MenuItem>
                         </Menu>
                     </div>

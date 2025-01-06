@@ -10,7 +10,7 @@ import useAxiosInstance from '../axios/axiosInterceptors';
 const InteractionModal = ({ open, handleClose, InteractionData, restaurantLists }) => {
 
     const initialState = {
-        restaurantId: InteractionData.restaurantId ? InteractionData.restaurantId : 0,
+        restaurantId: InteractionData?.restaurantId ? InteractionData.restaurantId : 0,
         pocId: 0,
         interactionType: "",
         interactedDate: "",
@@ -156,13 +156,13 @@ const InteractionModal = ({ open, handleClose, InteractionData, restaurantLists 
                             : <input type="text" placeholder="Restaurant Name" value={InteractionData.restaurantName} disabled />
                         }
                         <select value={interaction.pocId} onChange={handlePocChange}>
-                            {(pocs.length === 0 && InteractionData.restaurantPocs.length == 0) ? <option value=" "> No Pocs Registered </option> : <option value="">Select Poc</option>}
+                            {(pocs.length === 0 && InteractionData?.restaurantPocs.length == 0) ? <option value=" "> No Pocs Registered </option> : <option value="">Select Poc</option>}
                             {InteractionData == null ?
                                 (pocs?.map((poc) => <option key={poc.pocId} value={poc.pocId}>{poc.pocName}</option>))
                                 : (InteractionData.restaurantPocs.map((poc) => <option key={poc.pocId} value={poc.pocId}>{poc.pocName}</option>))}
                         </select>
                         <select value={interaction.interactionType} onChange={(e) => setInteraction({ ...interaction, interactionType: e.target.value })}>
-                            <option value="">Select Role</option>
+                            <option value="">Select Interaction Type</option>
                             {interactionTypes.map((role) => <option key={role} value={role}>{role}</option>)} </select>
                         <input type="text" placeholder="Interaction Details" value={interaction.interactionDetails} onChange={(e) => setInteraction({ ...interaction, interactionDetails: e.target.value })} />
                         {/* <input type="date" placeholder="Order Date" value={interaction.orderDate} onChange={(e) => setInteraction({ ...interaction, orderDate: e.target.value })} /> */}
