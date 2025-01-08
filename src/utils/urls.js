@@ -1,4 +1,5 @@
-export const BASE_URL = "http://localhost:8090";
+const isProduction =true;
+export const BASE_URL = !isProduction ? "http://localhost:8080" : "http://51.20.156.209:8080";
 
 export const ENDPOINTS = {
   LOGIN: "/login",
@@ -9,3 +10,5 @@ export default {
   BASE_URL,
   ENDPOINTS,
 };
+
+
